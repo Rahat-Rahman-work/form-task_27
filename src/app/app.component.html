@@ -1,0 +1,39 @@
+<hr/>
+<h3 style="text-align:center">Selise</h3>
+<hr/>
+<p>{{profileForm.value | json }}</p>
+<div class="container">
+<form [formGroup]="profileForm">
+  <div class="form-group">
+  <label>First Name: &nbsp;</label>
+  <input [class.is-invalid]= "firstName.invalid && firstName.touched" formControlName="firstName" type="text" class="form-control">
+  <!-- <small [class.d-none]="profileForm.get('firstName').valid || profileForm.get('firstName').untouched" class="text-danger">Required</small> -->
+  <div *ngIf="firstName.invalid && firstName.touched ">
+      <small *ngIf="firstName.errors?.required" class="text-danger">Required</small>
+      <small *ngIf="firstName.errors?.minlength" class="text-danger">Firstname must be at least 3 characters</small>
+      <small *ngIf="firstName.errors?.forbiddenName" class="text-danger">{{firstName.errors?.forbiddenName.value}} Avoid this name</small>
+  </div>
+  
+</div>
+<!-- <br>-->
+<div class="form-group">
+  <label>Last Name: &nbsp;</label>
+  <input [class.is-invalid]= "profileForm.get('lastName').invalid && profileForm.get('lastName').touched" formControlName="lastName" type="text" class="form-control">
+</div>
+<!-- <br> -->
+  <label>Email: &nbsp;</label>
+  <input formControlName="email" type="text">
+<br>
+  <div formGroupName="address">
+      <label>House No: &nbsp;</label>
+      <input formControlName="house" type="text"> 
+      <br>
+      <label>Area &nbsp;</label>
+      <input formControlName="area" type="text"> 
+      <br>
+  </div>
+  <button class="btn btn-primaty" type="submit">Sign-Up</button>
+  <button (click)="load()" class="btn btn-secondary mx-2" type="button">Load</button>
+</form>
+</div><br><hr/>
+<hr/>
