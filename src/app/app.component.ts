@@ -1,56 +1,73 @@
-import { Component } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { RegistrationService } from './registration.service';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from '@angular/forms';
 import { forbiddenNameValidator } from './shared/name.validator';
+import { PasswordValidator } from './shared/password.validator';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
 
-  form: FormGroup;
+  //form: FormGroup;
+  submitted = false;
+  errorMsg='';
+  profileForm: FormGroup;
   get firstName(){
     return this.profileForm.get('firstName');
   }
+  get email(){
+    return this.profileForm.get('email');
+  }
 
-  constructor(private fb: FormBuilder) {}
-    // let formBuilder = new FormBuilder();
-    // this.form = formBuilder.group({
-    //   'userName': [''],
-    //   'password':['']
+  get alternateEmail(){
+    return this.profileForm.get('alternateEmail') as FormArray;
+  }
 
-    // });
-    profileForm = this.fb.group({
-       firstName: ['', [Validators.required, Validators.minLength(3),forbiddenNameValidator]],
-       lastName: ['', Validators.required],
-       email: [''],
-       address: this.fb.group({
-         house: [''],
-         area: ['']
-       })
-    });
+  addAlternateEmail(){
+    this.alternateEmail.push(this.fb.control(''));
+  }
+// private _registrationService: RegistrationService
+  constructor(private fb: FormBuilder, private _registrationService: RegistrationService) {}
 
-  //   profileForm = new FormGroup({
-  //   firstName: new FormControl(''),
-  //   lastName: new FormControl(''),
-  //   email: new FormControl(''),
-  //   address: new FormGroup({
-  //          house: new FormControl(''),
-  //          area: new FormControl('')
-  //   })
-  // });
+    ngOnInit(){
+      this.profileForm = this.fb.group({
+        firstName: ['', [Validators.required, Validators.minLength(3),forbiddenNameValidator]],
+        lastName: ['', Validators.required],
+        email: [''],
+        subscribe: [false],
+        password: [''],
+        confirmPassword: [''],
+        address: this.fb.group({
+          house: [''],
+          area: ['']
+        }),
+        alternateEmail: this.fb.array([])
+     },{validator: PasswordValidator });
 
-  load() {
-    this.profileForm.setValue({
-       firstName: 'Rahat',
-       lastName: 'Rahman',
-       email: 'rahatrm13@gmail.com',
-       address: {
-         house: '32/d',
-         area: 'Khilgoan'
+     this.profileForm.get('subscribe').valueChanges.subscribe(checkedvalue=>{
+       const email= this.profileForm.get('email');
+       if(checkedvalue){
+         email.setValidators(Validators.required);
+       } else {
+         email.clearValidators();
        }
-    });
-   }
+       email.updateValueAndValidity();
+     });
+    }
+
+    onSubmit(){
+      this.submitted=true;
+      console.log(this.profileForm.value);
+      this._registrationService.register(this.profileForm.value).subscribe(
+        response => console.log('Success', response),
+        //error => console.log('Error!', error),
+        error => this.errorMsg= error.ststusText
+      );
+    }
+
 
 }

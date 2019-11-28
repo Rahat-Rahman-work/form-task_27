@@ -3,37 +3,65 @@
 <hr/>
 <p>{{profileForm.value | json }}</p>
 <div class="container">
-<form [formGroup]="profileForm">
-  <div class="form-group">
-  <label>First Name: &nbsp;</label>
-  <input [class.is-invalid]= "firstName.invalid && firstName.touched" formControlName="firstName" type="text" class="form-control">
-  <!-- <small [class.d-none]="profileForm.get('firstName').valid || profileForm.get('firstName').untouched" class="text-danger">Required</small> -->
-  <div *ngIf="firstName.invalid && firstName.touched ">
-      <small *ngIf="firstName.errors?.required" class="text-danger">Required</small>
-      <small *ngIf="firstName.errors?.minlength" class="text-danger">Firstname must be at least 3 characters</small>
-      <small *ngIf="firstName.errors?.forbiddenName" class="text-danger">{{firstName.errors?.forbiddenName.value}} Avoid this name</small>
-  </div>
-  
-</div>
-<!-- <br>-->
-<div class="form-group">
-  <label>Last Name: &nbsp;</label>
-  <input [class.is-invalid]= "profileForm.get('lastName').invalid && profileForm.get('lastName').touched" formControlName="lastName" type="text" class="form-control">
-</div>
-<!-- <br> -->
-  <label>Email: &nbsp;</label>
-  <input formControlName="email" type="text">
-<br>
+  <!-- <div class="alert alert-danger" *ngIf="errorMsg"> 
+     {{errorMsg}}
+  </div> -->
+<form [formGroup]="profileForm" *ngIf="!submitted" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+    <label>First Name: &nbsp;</label>
+    <input [class.is-invalid]= "firstName.invalid && firstName.touched" formControlName="firstName" type="text" class="form-control">
+    <!-- <small [class.d-none]="profileForm.get('firstName').valid || profileForm.get('firstName').untouched" class="text-danger">Required</small> -->
+    <div *ngIf="firstName.invalid && firstName.touched ">
+        <small *ngIf="firstName.errors?.required" class="text-danger">Required</small>
+        <small *ngIf="firstName.errors?.minlength" class="text-danger">Firstname must be at least 3 characters</small>
+        <small *ngIf="firstName.errors?.forbiddenName" class="text-danger">{{firstName.errors?.forbiddenName.value}} Avoid this name</small>
+    </div>
+    </div>
+    <!-- <br>-->
+    <div class="form-group">
+      <label>Last Name: &nbsp;</label>
+      <input [class.is-invalid]= "profileForm.get('lastName').invalid && profileForm.get('lastName').touched" formControlName="lastName" type="text" class="form-control">
+    </div>
+    <!-- <br> -->
+
+    <div class="form-group">
+      <label>Email: &nbsp;</label>
+      <button class="btn btn-secondary btn-sm m-2" type="button" (click)="addAlternateEmail()">Add Email</button>
+      <input  [class.is-invalid]="email.invalid && email.touched" formControlName="email" type="text" class="form-control">
+      <small class="text-danger" [class.d-none]="email.valid || email.untouched">Email is required</small>
+      <div *ngFor="let email of alternateEmail.controls; let i=index" formArrayName="alternateEmail" >
+        <input type="text" class="form-control my-1" [formControlName]="i">
+      </div>
+    </div>
+
+    <div class="form check mb-2 ml-3">
+      <input class="form-check-input" formControlName="subscribe" type="checkbox">
+      <label class="form-check-label">
+        Send me promotional offer
+      </label>
+    </div>
+    <div class="form-group">
+        <label>Password: &nbsp;</label>
+        <input formControlName="password" type="password" class="form-control">
+    </div>
+    <div class="form-group">
+        <label>Confirm Password &nbsp;</label>
+        <input [class.is-invalid]="profileForm.errors?.misMatch" formControlName="confirmPassword" type="password" class="form-control">
+        <small class="text-danger" *ngIf="profileForm.errors?.misMatch">Password do not match</small>
+    </div>
+
   <div formGroupName="address">
+     <div class="form-group">
       <label>House No: &nbsp;</label>
-      <input formControlName="house" type="text"> 
-      <br>
+      <input formControlName="house" type="text" class="form-control"> 
+     </div>
+     <div class="form-group">
       <label>Area &nbsp;</label>
-      <input formControlName="area" type="text"> 
-      <br>
+      <input formControlName="area" type="text"  class="form-control"> 
+     </div>
   </div>
   <button class="btn btn-primaty" type="submit">Sign-Up</button>
-  <button (click)="load()" class="btn btn-secondary mx-2" type="button">Load</button>
+  <!-- <button (click)="load()" class="btn btn-secondary mx-2" type="button">Load</button> -->
 </form>
 </div><br><hr/>
 <hr/>
